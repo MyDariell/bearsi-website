@@ -2,8 +2,8 @@ import Navbar from '../components/Navbar'
 import CollectionNav from '../components/CollectionNav'
 import ProductCard from '../components/ProductCard'
 import './BlindBoxes.css'
-import vdayBlindBox from '../assets/images/products/vday_blindbox.png'
-import vdayBlindBoxCouples from '../assets/images/products/vday_blindbox_couples.png'
+import vdayBlindBox from '../assets/images/products/vday_collection/vday_blindbox/vday_blindbox.png'
+import vdayBlindBoxCouples from '../assets/images/products/vday_collection/vday_blindbox_couples/vday_blindbox_couples.png'
 
 function BlindBoxes() {
   const products = [
