@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CollectionNav from '../components/CollectionNav'
 import ProductCard from '../components/ProductCard'
@@ -6,15 +7,19 @@ import vdayBlindBox from '../assets/images/products/vday_collection/vday_blindbo
 import vdayBlindBoxCouples from '../assets/images/products/vday_collection/vday_blindbox_couples/vday_blindbox_couples.png'
 
 function BlindBoxes() {
+  const navigate = useNavigate()
+
   const products = [
     {
       id: 1,
+      slug: 'vday-blind-box',
       image: vdayBlindBox,
       title: 'Valentine\'s Day Blind Box',
       price: 'CA $ 20.00'
     },
     {
       id: 2,
+      slug: 'vday-blind-box-couples',
       image: vdayBlindBoxCouples,
       title: 'Valentine\'s Day Blind Box Couple Package',
       price: 'CA $ 45.00'
@@ -22,7 +27,7 @@ function BlindBoxes() {
   ]
 
   const handleProductClick = (product) => {
-    console.log(`Clicked on ${product.title}`)
+    navigate(`/product/${product.slug}`)
   }
 
   return (
