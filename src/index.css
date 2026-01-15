@@ -5,13 +5,32 @@
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Fonts */
+  --font-display: "Coiny", system-ui, sans-serif;
+  --font-body: "Schoolbell", system-ui, sans-serif;
+
+  /* Light backgrounds */
+  --cream-100: #f8f6f2;
+  --cream-200: #f1ede6;
+  --cream-300: #e7e1d7;
+
+  /* Brand tans */
+  --tan-300: #d9c6a3;
+  --tan-400: #cbb089;
+  --tan-500: #b89a6b;
+
+  /* Dark accents */
+  --brown-700: #7a6346;
+  --brown-800: #4f402e;
+  --brown-900: #2b241c;
+  --black-soft: #16130f;
+
+  font-family: var(--font-body);
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--brown-900);
+  background-color: var(--cream-100);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,11 +42,15 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--cream-100);
+  color: var(--brown-900);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
+a {
+  color: var(--tan-500);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--brown-800);
 }

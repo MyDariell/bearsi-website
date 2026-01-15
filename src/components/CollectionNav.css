@@ -1,0 +1,60 @@
+.collection-nav {
+  background-color: var(--cream-200);
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.collection-btn {
+  background: transparent;
+  color: var(--brown-900);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.collection-btn.active {
+  font-weight: 600;
+  border-bottom: 3px solid var(--brown-900);
+}
+
+.collection-btn.coming-soon {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.collection-btn:not(.coming-soon):hover {
+  color: var(--tan-500);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .collection-nav {
+    padding: 1.5rem 1rem;
+    gap: 1rem;
+  }
+
+  .collection-btn {
+    font-size: 1rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .collection-nav {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .collection-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
