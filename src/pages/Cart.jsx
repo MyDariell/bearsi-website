@@ -11,6 +11,8 @@ function Cart() {
 
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [phoneError, setPhoneError] = useState('')
   const [selectedLocation, setSelectedLocation] = useState('')
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
@@ -25,6 +27,61 @@ function Cart() {
   const timeSlots = {
     'jan-24': ['10:00 - 12:00', '15:00 - 17:00'],
     'jan-25': ['16:00 - 17:00']
+  }
+
+  const validateEmail = (value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!value) {
+      return false
+    }
+    if (!emailRegex.test(value)) {
+      return false
+    }
+    return true
+  }
+
+  const validatePhone = (value) => {
+    const phoneRegex = /^[\d\s\-()]+$/
+    if (!value) {
+      return false
+    }
+    if (value.replace(/[\s\-()]/g, '').length < 10) {
+      return false
+    }
+    if (!phoneRegex.test(value)) {
+      return false
+    }
+    return true
+  }
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value
+    setEmail(value)
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (value && !emailRegex.test(value)) {
+      setEmailError('Please enter a valid email address')
+    } else {
+      setEmailError('')
+    }
+  }
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value
+    setPhone(value)
+
+    const phoneRegex = /^[\d\s\-()]+$/
+    if (value) {
+      if (value.replace(/[\s\-()]/g, '').length < 10) {
+        setPhoneError('Please enter a valid phone number')
+      } else if (!phoneRegex.test(value)) {
+        setPhoneError('Phone number can only contain numbers, spaces, dashes, and parentheses')
+      } else {
+        setPhoneError('')
+      }
+    } else {
+      setPhoneError('')
+    }
   }
 
   const handleFileUpload = (e) => {
@@ -47,7 +104,13 @@ function Cart() {
     }
   }
 
-  const isCheckoutEnabled = email && phone && isPickupConfirmed && uploadedFile
+  const handleUnconfirmPickup = () => {
+    setIsPickupConfirmed(false)
+  }
+
+  const isEmailValid = validateEmail(email)
+  const isPhoneValid = validatePhone(phone)
+  const isCheckoutEnabled = isEmailValid && isPhoneValid && isPickupConfirmed && uploadedFile
 
   const handleCheckout = () => {
     if (isCheckoutEnabled) {
@@ -85,22 +148,24 @@ function Cart() {
               <label className="cart-label">*Email :</label>
               <input
                 type="email"
-                className="cart-input"
+                className={`cart-input ${emailError ? 'error' : ''}`}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 placeholder="your@email.com"
               />
+              {emailError && <p className="error-message">{emailError}</p>}
             </div>
 
             <div className="cart-section">
               <label className="cart-label">*Phone number :</label>
               <input
                 type="tel"
-                className="cart-input"
+                className={`cart-input ${phoneError ? 'error' : ''}`}
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={handlePhoneChange}
                 placeholder="123-456-7890"
               />
+              {phoneError && <p className="error-message">{phoneError}</p>}
               <p className="cart-hint">
                 *have your email ready to receive your receipt and phone
                 number in case I need to contact you regarding your
@@ -109,57 +174,63 @@ function Cart() {
             </div>
 
             <div className="cart-section">
-              <h3 className="cart-section-title">Choose Pickup - time and location</h3>
+              <h3 className="cart-section-title underline">Choose Pickup - time and location</h3>
 
               <div className="pickup-locations">
                 {locations.map((location) => (
                   <button
                     key={location}
-                    className={`location-btn ${selectedLocation === location ? 'active' : ''}`}
-                    onClick={() => setSelectedLocation(location)}
+                    className={`location-btn ${selectedLocation === location ? 'active' : ''} ${isPickupConfirmed ? 'disabled' : ''}`}
+                    onClick={() => !isPickupConfirmed && setSelectedLocation(location)}
+                    disabled={isPickupConfirmed}
                   >
                     {location}
                   </button>
                 ))}
               </div>
 
-              <div className="pickup-schedule">
-                {dates.map((date) => (
-                  <div key={date.value} className="schedule-row">
-                    <button
-                      className={`date-btn ${selectedDate === date.value ? 'active' : ''}`}
-                      onClick={() => {
-                        setSelectedDate(date.value)
-                        setSelectedTime('')
-                      }}
-                    >
-                      {date.label}
-                    </button>
-                    <div className="time-slots">
-                      {timeSlots[date.value].map((time) => (
-                        <button
-                          key={time}
-                          className={`time-btn ${
-                            selectedDate === date.value && selectedTime === time
-                              ? 'active'
-                              : selectedDate !== date.value
-                              ? 'disabled'
-                              : ''
-                          }`}
-                          onClick={() => {
-                            if (selectedDate === date.value) {
-                              setSelectedTime(time)
-                            }
-                          }}
-                          disabled={selectedDate !== date.value}
-                        >
-                          {time}
-                        </button>
-                      ))}
+              {selectedLocation && (
+                <div className="pickup-schedule">
+                  {dates.map((date) => (
+                    <div key={date.value} className="schedule-row">
+                      <button
+                        className={`date-btn ${selectedDate === date.value ? 'active' : ''} ${isPickupConfirmed ? 'disabled' : ''}`}
+                        onClick={() => {
+                          if (!isPickupConfirmed) {
+                            setSelectedDate(date.value)
+                            setSelectedTime('')
+                          }
+                        }}
+                        disabled={isPickupConfirmed}
+                      >
+                        {date.label}
+                      </button>
+                      <div className="time-slots">
+                        {timeSlots[date.value].map((time) => (
+                          <button
+                            key={time}
+                            className={`time-btn ${
+                              selectedDate === date.value && selectedTime === time
+                                ? 'active'
+                                : selectedDate !== date.value || isPickupConfirmed
+                                ? 'disabled'
+                                : ''
+                            }`}
+                            onClick={() => {
+                              if (selectedDate === date.value && !isPickupConfirmed) {
+                                setSelectedTime(time)
+                              }
+                            }}
+                            disabled={selectedDate !== date.value || isPickupConfirmed}
+                          >
+                            {time}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
               <p className="cart-hint">
                 If none of the available pickup times or locations work for
@@ -168,12 +239,21 @@ function Cart() {
                 you to receive your bear.
               </p>
 
-              <button
-                className={`confirm-btn ${isPickupConfirmed ? 'confirmed' : ''}`}
-                onClick={handleConfirmPickup}
-              >
-                {isPickupConfirmed ? 'Confirmed ✓' : 'Confirm'}
-              </button>
+              {!isPickupConfirmed ? (
+                <button
+                  className="confirm-btn"
+                  onClick={handleConfirmPickup}
+                >
+                  Confirm
+                </button>
+              ) : (
+                <button
+                  className="confirm-btn confirmed"
+                  onClick={handleUnconfirmPickup}
+                >
+                  Confirmed ✓ (Click to change)
+                </button>
+              )}
             </div>
 
             <div className="cart-section">
