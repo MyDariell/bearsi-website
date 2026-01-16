@@ -6,7 +6,7 @@ import ProductDetail from './pages/ProductDetail'
 
 function App() {
   return (
-    <Router>
+    <Router basename="/bearsi-website">
       <div className="app">
         <Routes>
           <Route path="/" element={<Home />} />
