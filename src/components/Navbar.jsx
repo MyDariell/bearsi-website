@@ -1,8 +1,11 @@
 import { useNavigate } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
 import './Navbar.css'
 
 function Navbar() {
   const navigate = useNavigate()
+  const { getCartItemsCount } = useCart()
+  const cartItemsCount = getCartItemsCount()
 
   const handleNavClick = (page) => {
     console.log(`Navigating to ${page}`)
@@ -10,6 +13,10 @@ function Navbar() {
 
   const handleLogoClick = () => {
     navigate('/')
+  }
+
+  const handleCartClick = () => {
+    navigate('/cart')
   }
 
   return (
@@ -30,10 +37,13 @@ function Navbar() {
             Meet the Bears
           </button>
           <button
-            className="nav-btn"
-            onClick={() => handleNavClick('Cart')}
+            className="nav-btn cart-btn"
+            onClick={handleCartClick}
           >
             Cart
+            {cartItemsCount > 0 && (
+              <span className="cart-badge">{cartItemsCount}</span>
+            )}
           </button>
         </div>
       </div>

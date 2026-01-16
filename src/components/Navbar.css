@@ -51,6 +51,28 @@
   transform: scale(0.98);
 }
 
+.cart-btn {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--brown-900);
+  color: var(--cream-100);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .navbar {
