@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CartItem from '../components/CartItem'
 import { useCart } from '../context/CartContext'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
+import dayjs from 'dayjs'
 import './Cart.css'
 
 function Cart() {
@@ -19,14 +23,49 @@ function Cart() {
   const [isPickupConfirmed, setIsPickupConfirmed] = useState(false)
   const [uploadedFile, setUploadedFile] = useState(null)
 
-  const locations = ['Brentwood', 'Metrotown', 'Richmond Center']
-  const dates = [
-    { label: 'January 24', value: 'jan-24' },
-    { label: 'January 25', value: 'jan-25' }
-  ]
-  const timeSlots = {
-    'jan-24': ['10:00 - 12:00', '15:00 - 17:00'],
-    'jan-25': ['16:00 - 17:00']
+  // Mockup data: each location has specific dates and times
+  const locationSchedule = {
+    'Brentwood': {
+      availableDates: [
+        dayjs('2026-01-24'),
+        dayjs('2026-01-26')
+      ],
+      timeSlots: {
+        '2026-01-24': ['10:00 AM - 12:00 PM', '2:00 PM - 4:00 PM'],
+        '2026-01-26': ['1:00 PM - 3:00 PM', '4:00 PM - 6:00 PM']
+      }
+    },
+    'Metrotown': {
+      availableDates: [
+        dayjs('2026-01-25'),
+        dayjs('2026-01-27')
+      ],
+      timeSlots: {
+        '2026-01-25': ['11:00 AM - 1:00 PM', '3:00 PM - 5:00 PM'],
+        '2026-01-27': ['10:00 AM - 12:00 PM', '2:00 PM - 4:00 PM']
+      }
+    },
+    'Richmond Center': {
+      availableDates: [
+        dayjs('2026-01-24'),
+        dayjs('2026-01-28')
+      ],
+      timeSlots: {
+        '2026-01-24': ['12:00 PM - 2:00 PM', '4:00 PM - 6:00 PM'],
+        '2026-01-28': ['10:00 AM - 12:00 PM', '1:00 PM - 3:00 PM']
+      }
+    }
+  }
+
+  const locations = Object.keys(locationSchedule)
+
+  // Function to check if date is available for selected location
+  const shouldDisableDate = (date) => {
+    if (!selectedLocation) return true
+    const availableDates = locationSchedule[selectedLocation].availableDates
+    return !availableDates.some(availableDate =>
+      availableDate.format('YYYY-MM-DD') === date.format('YYYY-MM-DD')
+    )
   }
 
   const validateEmail = (value) => {
@@ -190,45 +229,66 @@ function Cart() {
               </div>
 
               {selectedLocation && (
-                <div className="pickup-schedule">
-                  {dates.map((date) => (
-                    <div key={date.value} className="schedule-row">
-                      <button
-                        className={`date-btn ${selectedDate === date.value ? 'active' : ''} ${isPickupConfirmed ? 'disabled' : ''}`}
-                        onClick={() => {
-                          if (!isPickupConfirmed) {
-                            setSelectedDate(date.value)
-                            setSelectedTime('')
-                          }
-                        }}
-                        disabled={isPickupConfirmed}
-                      >
-                        {date.label}
-                      </button>
+                <div className="calendar-container">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateCalendar
+                      value={selectedDate ? dayjs(selectedDate) : null}
+                      onChange={(newDate) => {
+                        if (!isPickupConfirmed && newDate) {
+                          setSelectedDate(newDate.format('YYYY-MM-DD'))
+                          setSelectedTime('')
+                        }
+                      }}
+                      shouldDisableDate={shouldDisableDate}
+                      disabled={isPickupConfirmed}
+                      sx={{
+                        width: '100%',
+                        '& .MuiPickersDay-root': {
+                          fontFamily: 'var(--font-body)',
+                          '&.Mui-selected': {
+                            backgroundColor: 'var(--brown-700)',
+                            color: 'var(--cream-100)',
+                            '&:hover': {
+                              backgroundColor: 'var(--brown-800)',
+                            },
+                          },
+                          '&:not(.Mui-disabled):hover': {
+                            backgroundColor: 'var(--tan-300)',
+                          },
+                        },
+                        '& .MuiDayCalendar-weekDayLabel': {
+                          fontFamily: 'var(--font-body)',
+                          color: 'var(--brown-700)',
+                        },
+                        '& .MuiPickersCalendarHeader-label': {
+                          fontFamily: 'var(--font-display)',
+                          color: 'var(--brown-900)',
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+
+                  {selectedDate && (
+                    <div className="time-slots-container">
+                      <p className="time-slots-label">Available Times:</p>
                       <div className="time-slots">
-                        {timeSlots[date.value].map((time) => (
+                        {locationSchedule[selectedLocation].timeSlots[selectedDate]?.map((time) => (
                           <button
                             key={time}
-                            className={`time-btn ${
-                              selectedDate === date.value && selectedTime === time
-                                ? 'active'
-                                : selectedDate !== date.value || isPickupConfirmed
-                                ? 'disabled'
-                                : ''
-                            }`}
+                            className={`time-btn ${selectedTime === time ? 'selected' : ''} ${isPickupConfirmed ? 'disabled' : ''}`}
                             onClick={() => {
-                              if (selectedDate === date.value && !isPickupConfirmed) {
+                              if (!isPickupConfirmed) {
                                 setSelectedTime(time)
                               }
                             }}
-                            disabled={selectedDate !== date.value || isPickupConfirmed}
+                            disabled={isPickupConfirmed}
                           >
                             {time}
                           </button>
                         ))}
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
 
