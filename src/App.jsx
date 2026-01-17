@@ -7,7 +7,7 @@ import Cart from './pages/Cart'
 
 function App() {
   return (
-    <Router basename="/bearsi-website">
+    <Router>
       <div className="app">
         <Routes>
           <Route path="/" element={<Home />} />
