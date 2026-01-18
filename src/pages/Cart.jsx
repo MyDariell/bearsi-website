@@ -198,8 +198,22 @@ function Cart() {
     try {
       setIsSubmitting(true)
 
-      // Note: File upload is disabled (R2 not configured yet)
-      // For now, we'll submit without file upload
+      // Upload file to R2 first
+      let fileUrl = null
+      let fileName = null
+
+      if (uploadedFile) {
+        try {
+          const uploadResult = await api.uploadFile(uploadedFile)
+          fileUrl = uploadResult.fileUrl
+          fileName = uploadResult.fileName
+        } catch (uploadErr) {
+          console.error('File upload failed:', uploadErr)
+          // Continue without file if upload fails
+          alert('Warning: File upload failed, but order will still be created.')
+        }
+      }
+
       const orderData = {
         customerEmail: email,
         customerPhone: phone,
@@ -207,8 +221,8 @@ function Cart() {
         timeslotId: selectedTimeslot.id,
         pickupDate: selectedDate,
         pickupTime: selectedTime,
-        proofFileUrl: null, // Will be populated when R2 is enabled
-        proofFileName: uploadedFile ? uploadedFile.name : null,
+        proofFileUrl: fileUrl,
+        proofFileName: fileName,
         items: cartItems.map(item => {
           // Extract product ID from item
           const productId = item.id
