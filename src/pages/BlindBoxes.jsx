@@ -21,7 +21,7 @@ function BlindBoxes() {
         const transformedProducts = data.products.map(p => ({
           id: p.id,
           slug: p.slug,
-          image: p.images[0], // Use first image
+          image: `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787'}${p.images[0]}`, // Use first image from R2
           title: p.name,
           price: `CA $ ${p.price.toFixed(2)}`
         }))

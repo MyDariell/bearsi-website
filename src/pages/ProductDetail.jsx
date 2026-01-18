@@ -22,6 +22,7 @@ function ProductDetail() {
         setLoading(true)
         const data = await api.getProductBySlug(productId)
         // Transform API data to match component expectations
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
         const transformedProduct = {
           id: data.product.id,
           slug: data.product.slug,
@@ -30,7 +31,7 @@ function ProductDetail() {
           price: `CA $ ${data.product.price.toFixed(2)}`,
           description: data.product.description,
           bears: data.product.bears,
-          images: data.product.images
+          images: data.product.images.map(img => `${apiBaseUrl}${img}`)
         }
         setProduct(transformedProduct)
       } catch (err) {
