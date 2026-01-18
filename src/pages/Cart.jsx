@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CartItem from '../components/CartItem'
 import { useCart } from '../context/CartContext'
+import { api } from '../services/api'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
@@ -11,61 +12,76 @@ import './Cart.css'
 
 function Cart() {
   const navigate = useNavigate()
-  const { cartItems, getCartTotal } = useCart()
+  const { cartItems, getCartTotal, clearCart } = useCart()
 
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [emailError, setEmailError] = useState('')
   const [phoneError, setPhoneError] = useState('')
-  const [selectedLocation, setSelectedLocation] = useState('')
+  const [selectedLocation, setSelectedLocation] = useState(null)
+  const [selectedTimeslot, setSelectedTimeslot] = useState(null)
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
   const [isPickupConfirmed, setIsPickupConfirmed] = useState(false)
   const [uploadedFile, setUploadedFile] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Mockup data: each location has specific dates and times
-  const locationSchedule = {
-    'Brentwood': {
-      availableDates: [
-        dayjs('2026-01-24'),
-        dayjs('2026-01-26')
-      ],
-      timeSlots: {
-        '2026-01-24': ['10:00 AM - 12:00 PM', '2:00 PM - 4:00 PM'],
-        '2026-01-26': ['1:00 PM - 3:00 PM', '4:00 PM - 6:00 PM']
-      }
-    },
-    'Metrotown': {
-      availableDates: [
-        dayjs('2026-01-25'),
-        dayjs('2026-01-27')
-      ],
-      timeSlots: {
-        '2026-01-25': ['11:00 AM - 1:00 PM', '3:00 PM - 5:00 PM'],
-        '2026-01-27': ['10:00 AM - 12:00 PM', '2:00 PM - 4:00 PM']
-      }
-    },
-    'Richmond Center': {
-      availableDates: [
-        dayjs('2026-01-24'),
-        dayjs('2026-01-28')
-      ],
-      timeSlots: {
-        '2026-01-24': ['12:00 PM - 2:00 PM', '4:00 PM - 6:00 PM'],
-        '2026-01-28': ['10:00 AM - 12:00 PM', '1:00 PM - 3:00 PM']
+  // API data
+  const [locations, setLocations] = useState([])
+  const [timeslots, setTimeslots] = useState([])
+  const [loadingLocations, setLoadingLocations] = useState(true)
+  const [loadingTimeslots, setLoadingTimeslots] = useState(false)
+
+  // Fetch locations on mount
+  useEffect(() => {
+    async function fetchLocations() {
+      try {
+        const data = await api.getLocations()
+        setLocations(data.locations)
+      } catch (err) {
+        console.error('Failed to fetch locations:', err)
+      } finally {
+        setLoadingLocations(false)
       }
     }
-  }
+    fetchLocations()
+  }, [])
 
-  const locations = Object.keys(locationSchedule)
+  // Fetch timeslots when location changes
+  useEffect(() => {
+    if (!selectedLocation) {
+      setTimeslots([])
+      return
+    }
+
+    async function fetchTimeslots() {
+      try {
+        setLoadingTimeslots(true)
+        const data = await api.getTimeslots(selectedLocation.id)
+        setTimeslots(data.timeslots)
+      } catch (err) {
+        console.error('Failed to fetch timeslots:', err)
+      } finally {
+        setLoadingTimeslots(false)
+      }
+    }
+    fetchTimeslots()
+  }, [selectedLocation])
+
+  // Get unique available dates from timeslots
+  const availableDates = timeslots.map(t => t.date)
+  const uniqueDates = [...new Set(availableDates)]
+
+  // Get timeslots for selected date
+  const getTimeslotsForDate = (date) => {
+    return timeslots.filter(t => t.date === date && t.spotsLeft > 0)
+  }
 
   // Function to check if date is available for selected location
   const shouldDisableDate = (date) => {
     if (!selectedLocation) return true
-    const availableDates = locationSchedule[selectedLocation].availableDates
-    return !availableDates.some(availableDate =>
-      availableDate.format('YYYY-MM-DD') === date.format('YYYY-MM-DD')
-    )
+    const dateStr = date.format('YYYY-MM-DD')
+    return !uniqueDates.includes(dateStr)
   }
 
   const validateEmail = (value) => {
@@ -135,6 +151,31 @@ function Cart() {
     }
   }
 
+  const handleLocationSelect = (location) => {
+    if (!isPickupConfirmed) {
+      setSelectedLocation(location)
+      setSelectedDate('')
+      setSelectedTime('')
+      setSelectedTimeslot(null)
+    }
+  }
+
+  const handleDateSelect = (newDate) => {
+    if (!isPickupConfirmed && newDate) {
+      const dateStr = newDate.format('YYYY-MM-DD')
+      setSelectedDate(dateStr)
+      setSelectedTime('')
+      setSelectedTimeslot(null)
+    }
+  }
+
+  const handleTimeSelect = (timeslot) => {
+    if (!isPickupConfirmed) {
+      setSelectedTime(`${timeslot.start_time} - ${timeslot.end_time}`)
+      setSelectedTimeslot(timeslot)
+    }
+  }
+
   const handleConfirmPickup = () => {
     if (selectedLocation && selectedDate && selectedTime) {
       setIsPickupConfirmed(true)
@@ -151,10 +192,44 @@ function Cart() {
   const isPhoneValid = validatePhone(phone)
   const isCheckoutEnabled = isEmailValid && isPhoneValid && isPickupConfirmed && uploadedFile
 
-  const handleCheckout = () => {
-    if (isCheckoutEnabled) {
-      console.log('Proceeding to checkout...')
-      // Future: implement checkout logic
+  const handleCheckout = async () => {
+    if (!isCheckoutEnabled || isSubmitting) return
+
+    try {
+      setIsSubmitting(true)
+
+      // Note: File upload is disabled (R2 not configured yet)
+      // For now, we'll submit without file upload
+      const orderData = {
+        customerEmail: email,
+        customerPhone: phone,
+        locationId: selectedLocation.id,
+        timeslotId: selectedTimeslot.id,
+        pickupDate: selectedDate,
+        pickupTime: selectedTime,
+        proofFileUrl: null, // Will be populated when R2 is enabled
+        proofFileName: uploadedFile ? uploadedFile.name : null,
+        items: cartItems.map(item => {
+          // Extract product ID from item
+          const productId = item.id
+          return {
+            productId: typeof productId === 'string' ? parseInt(productId.split('-')[0]) || 1 : productId,
+            quantity: item.quantity
+          }
+        })
+      }
+
+      const result = await api.createOrder(orderData)
+
+      // Clear cart and redirect to success page
+      clearCart()
+      alert(`Order created successfully! Order number: ${result.orderNumber}`)
+      navigate('/')
+    } catch (err) {
+      console.error('Failed to create order:', err)
+      alert(`Failed to create order: ${err.message}`)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -216,74 +291,73 @@ function Cart() {
               <h3 className="cart-section-title underline">Choose Pickup - time and location</h3>
 
               <div className="pickup-locations">
-                {locations.map((location) => (
-                  <button
-                    key={location}
-                    className={`location-btn ${selectedLocation === location ? 'active' : ''} ${isPickupConfirmed ? 'disabled' : ''}`}
-                    onClick={() => !isPickupConfirmed && setSelectedLocation(location)}
-                    disabled={isPickupConfirmed}
-                  >
-                    {location}
-                  </button>
-                ))}
+                {loadingLocations ? (
+                  <p>Loading locations...</p>
+                ) : (
+                  locations.map((location) => (
+                    <button
+                      key={location.id}
+                      className={`location-btn ${selectedLocation?.id === location.id ? 'active' : ''} ${isPickupConfirmed ? 'disabled' : ''}`}
+                      onClick={() => handleLocationSelect(location)}
+                      disabled={isPickupConfirmed}
+                    >
+                      {location.name}
+                    </button>
+                  ))
+                )}
               </div>
 
               {selectedLocation && (
                 <div className="calendar-container">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateCalendar
-                      value={selectedDate ? dayjs(selectedDate) : null}
-                      onChange={(newDate) => {
-                        if (!isPickupConfirmed && newDate) {
-                          setSelectedDate(newDate.format('YYYY-MM-DD'))
-                          setSelectedTime('')
-                        }
-                      }}
-                      shouldDisableDate={shouldDisableDate}
-                      disabled={isPickupConfirmed}
-                      sx={{
-                        width: '100%',
-                        '& .MuiPickersDay-root': {
-                          fontFamily: 'var(--font-body)',
-                          '&.Mui-selected': {
-                            backgroundColor: 'var(--brown-700)',
-                            color: 'var(--cream-100)',
-                            '&:hover': {
-                              backgroundColor: 'var(--brown-800)',
+                  {loadingTimeslots ? (
+                    <p>Loading available dates...</p>
+                  ) : (
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DateCalendar
+                        value={selectedDate ? dayjs(selectedDate) : null}
+                        onChange={handleDateSelect}
+                        shouldDisableDate={shouldDisableDate}
+                        disabled={isPickupConfirmed}
+                        sx={{
+                          width: '100%',
+                          '& .MuiPickersDay-root': {
+                            fontFamily: 'var(--font-body)',
+                            '&.Mui-selected': {
+                              backgroundColor: 'var(--brown-700)',
+                              color: 'var(--cream-100)',
+                              '&:hover': {
+                                backgroundColor: 'var(--brown-800)',
+                              },
+                            },
+                            '&:not(.Mui-disabled):hover': {
+                              backgroundColor: 'var(--tan-300)',
                             },
                           },
-                          '&:not(.Mui-disabled):hover': {
-                            backgroundColor: 'var(--tan-300)',
+                          '& .MuiDayCalendar-weekDayLabel': {
+                            fontFamily: 'var(--font-body)',
+                            color: 'var(--brown-700)',
                           },
-                        },
-                        '& .MuiDayCalendar-weekDayLabel': {
-                          fontFamily: 'var(--font-body)',
-                          color: 'var(--brown-700)',
-                        },
-                        '& .MuiPickersCalendarHeader-label': {
-                          fontFamily: 'var(--font-display)',
-                          color: 'var(--brown-900)',
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
+                          '& .MuiPickersCalendarHeader-label': {
+                            fontFamily: 'var(--font-display)',
+                            color: 'var(--brown-900)',
+                          },
+                        }}
+                      />
+                    </LocalizationProvider>
+                  )}
 
                   {selectedDate && (
                     <div className="time-slots-container">
                       <p className="time-slots-label">Available Times:</p>
                       <div className="time-slots">
-                        {locationSchedule[selectedLocation].timeSlots[selectedDate]?.map((time) => (
+                        {getTimeslotsForDate(selectedDate).map((timeslot) => (
                           <button
-                            key={time}
-                            className={`time-btn ${selectedTime === time ? 'selected' : ''} ${isPickupConfirmed ? 'disabled' : ''}`}
-                            onClick={() => {
-                              if (!isPickupConfirmed) {
-                                setSelectedTime(time)
-                              }
-                            }}
+                            key={timeslot.id}
+                            className={`time-btn ${selectedTimeslot?.id === timeslot.id ? 'selected' : ''} ${isPickupConfirmed ? 'disabled' : ''}`}
+                            onClick={() => handleTimeSelect(timeslot)}
                             disabled={isPickupConfirmed}
                           >
-                            {time}
+                            {timeslot.start_time} - {timeslot.end_time} ({timeslot.spotsLeft} left)
                           </button>
                         ))}
                       </div>
@@ -345,9 +419,9 @@ function Cart() {
             <button
               className={`checkout-btn ${isCheckoutEnabled ? '' : 'disabled'}`}
               onClick={handleCheckout}
-              disabled={!isCheckoutEnabled}
+              disabled={!isCheckoutEnabled || isSubmitting}
             >
-              Checkout
+              {isSubmitting ? 'Submitting...' : 'Checkout'}
             </button>
           </div>
         </div>

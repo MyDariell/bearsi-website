@@ -88,4 +88,10 @@ Use the uploaded image for reference
 
 ____________________________________________________________________________________________
 
-Fix time slot funcitonality and data types. TO make sure time is tied to location
+- Create a mockup data that ties each location to 2 dates and specific times for those dates  
+- For the Cart Section, Replace the pickup-schedule with a Calendar UI that highlights the dates available for pick up. (Use the image for reference)
+- Once the user selects the location, the available timeslots will show
+- Ensure the confirm button logic still works by preventing edits once it's selected. Only if it is unselected can the user select a different location and date. 
+- Use contrasting colors to show selected location and times  
+
+Use mui react-date pickers (https://mui.com/x/react-date-pickers/date-picker/) To create a calendar object that can show the available dates and let's the user the selected date  

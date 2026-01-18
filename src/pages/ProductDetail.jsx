@@ -1,47 +1,64 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import ImageGallery from '../components/ImageGallery'
 import CartModal from '../components/CartModal'
 import { useCart } from '../context/CartContext'
+import { api } from '../services/api'
 import './ProductDetail.css'
-
-import vdayBlindBox from '../assets/images/products/vday_collection/vday_blindbox/vday_blindbox.png'
-import vdayCollection1 from '../assets/images/products/vday_collection/vday_blindbox/bearsi_collection.png'
-import vdayBlindBoxCouples from '../assets/images/products/vday_collection/vday_blindbox_couples/vday_blindbox_couples.png'
-import vdayCollection2 from '../assets/images/products/vday_collection/vday_blindbox_couples/bearsi_collection.png'
 
 function ProductDetail() {
   const { productId } = useParams()
   const [quantity, setQuantity] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const { addToCart } = useCart()
 
-  const productData = {
-    'vday-blind-box': {
-      id: 'vday-blind-box',
-      name: "Valentine's Day Blind Box",
-      stock: "Currently In Stock",
-      price: "CA $ 20.00",
-      description: "Get any of the following bears:",
-      bears: ["Bingsu", "Pip", "Powda", "Sunset"],
-      images: [vdayBlindBox, vdayCollection1]
-    },
-    'vday-blind-box-couples': {
-      id: 'vday-blind-box-couples',
-      name: "Valentine's Day Blind Box Couples Package",
-      stock: "Currently In Stock",
-      price: "CA $ 35.00",
-      description: "Get any of the following bears:",
-      bears: ["Bingsu", "Pip", "Powda", "Sunset"],
-      images: [vdayBlindBoxCouples, vdayCollection2]
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        setLoading(true)
+        const data = await api.getProductBySlug(productId)
+        // Transform API data to match component expectations
+        const transformedProduct = {
+          id: data.product.id,
+          slug: data.product.slug,
+          name: data.product.name,
+          stock: data.product.stock_status === 'in_stock' ? 'Currently In Stock' : 'Out of Stock',
+          price: `CA $ ${data.product.price.toFixed(2)}`,
+          description: data.product.description,
+          bears: data.product.bears,
+          images: data.product.images
+        }
+        setProduct(transformedProduct)
+      } catch (err) {
+        console.error('Failed to fetch product:', err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
     }
+    fetchProduct()
+  }, [productId])
+
+  if (loading) {
+    return (
+      <div className="product-detail-page">
+        <Navbar />
+        <div className="loading">Loading product...</div>
+      </div>
+    )
   }
 
-  const product = productData[productId]
-
-  if (!product) {
-    return <div>Product not found</div>
+  if (error || !product) {
+    return (
+      <div className="product-detail-page">
+        <Navbar />
+        <div className="error">Product not found</div>
+      </div>
+    )
   }
 
   const handleQuantityChange = (change) => {

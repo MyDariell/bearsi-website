@@ -1,6 +1,7 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 const CartContext = createContext()
+const CART_STORAGE_KEY = 'bearsi_cart'
 
 export function useCart() {
   const context = useContext(CartContext)
@@ -11,7 +12,20 @@ export function useCart() {
 }
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([])
+  // Load from localStorage on mount
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY)
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+
+  // Persist to localStorage on change
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems))
+  }, [cartItems])
 
   const addToCart = (product, quantity) => {
     setCartItems(prevItems => {
@@ -48,6 +62,7 @@ export function CartProvider({ children }) {
 
   const clearCart = () => {
     setCartItems([])
+    localStorage.removeItem(CART_STORAGE_KEY)
   }
 
   const getCartTotal = () => {

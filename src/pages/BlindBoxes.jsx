@@ -1,33 +1,73 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import CollectionNav from '../components/CollectionNav'
 import ProductCard from '../components/ProductCard'
+import { api } from '../services/api'
 import './BlindBoxes.css'
-import vdayBlindBox from '../assets/images/products/vday_collection/vday_blindbox/vday_blindbox.png'
-import vdayBlindBoxCouples from '../assets/images/products/vday_collection/vday_blindbox_couples/vday_blindbox_couples.png'
 
 function BlindBoxes() {
   const navigate = useNavigate()
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const products = [
-    {
-      id: 1,
-      slug: 'vday-blind-box',
-      image: vdayBlindBox,
-      title: 'Valentine\'s Day Blind Box',
-      price: 'CA $ 20.00'
-    },
-    {
-      id: 2,
-      slug: 'vday-blind-box-couples',
-      image: vdayBlindBoxCouples,
-      title: 'Valentine\'s Day Blind Box Couple Package',
-      price: 'CA $ 45.00'
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setLoading(true)
+        const data = await api.getProducts()
+        // Transform API data to match component expectations
+        const transformedProducts = data.products.map(p => ({
+          id: p.id,
+          slug: p.slug,
+          image: p.images[0], // Use first image
+          title: p.name,
+          price: `CA $ ${p.price.toFixed(2)}`
+        }))
+        setProducts(transformedProducts)
+      } catch (err) {
+        console.error('Failed to fetch products:', err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+    fetchProducts()
+  }, [])
 
   const handleProductClick = (product) => {
     navigate(`/product/${product.slug}`)
+  }
+
+  if (loading) {
+    return (
+      <div className="blind-boxes-page">
+        <Navbar />
+        <CollectionNav />
+        <section className="products-section">
+          <div className="container">
+            <h1 className="section-title">Blind Boxes</h1>
+            <div className="loading">Loading products...</div>
+          </div>
+        </section>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="blind-boxes-page">
+        <Navbar />
+        <CollectionNav />
+        <section className="products-section">
+          <div className="container">
+            <h1 className="section-title">Blind Boxes</h1>
+            <div className="error">Failed to load products. Please try again later.</div>
+          </div>
+        </section>
+      </div>
+    )
   }
 
   return (
