@@ -19,9 +19,9 @@ function Hero() {
           <br />
           Every Bearsi bear is made with care in Vancouver.
         </p> */}
-        {/* <button className="hero-btn" onClick={handleShopClick}>
+        <button className="hero-btn" onClick={handleShopClick}>
           Shop Blind Boxes
-        </button> */}
+        </button>
       </div>
     </section>
   )
