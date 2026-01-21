@@ -22,7 +22,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <h1 className="logo" onClick={handleLogoClick}>Bearsi</h1>
+        <h1 className="logo" onClick={handleLogoClick}>bearsi</h1>
         <div className="nav-buttons">
           <button
             className="nav-btn"

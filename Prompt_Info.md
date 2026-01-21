@@ -95,3 +95,5 @@ ________________________________________________________________________________
 - Use contrasting colors to show selected location and times  
 
 Use mui react-date pickers (https://mui.com/x/react-date-pickers/date-picker/) To create a calendar object that can show the available dates and let's the user the selected date  
+___________________________________________________________________________________________________________________________________
+

@@ -1,4 +1,8 @@
 .hero {
+  background-image: url('../assets/images/home/Bearsi_Hero.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   background-color: var(--cream-200);
   padding: 4rem 2rem;
   text-align: center;
@@ -11,6 +15,17 @@
 .hero-content {
   max-width: 900px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-logo {
+  width: 200 px;
+  height: auto;
+  max-width: 90%;
+  object-fit: contain;
 }
 
 .hero-title {
@@ -62,6 +77,10 @@
     min-height: 50vh;
   }
 
+  .hero-logo {
+    width: 300px;
+  }
+
   .hero-title {
     font-size: 2.5rem;
   }
@@ -80,6 +99,10 @@
 @media (max-width: 480px) {
   .hero {
     padding: 2.5rem 1rem;
+  }
+
+  .hero-logo {
+    width: 250px;
   }
 
   .hero-title {
