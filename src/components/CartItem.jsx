@@ -22,7 +22,9 @@ function CartItem({ item }) {
       </div>
       <div className="cart-item-details">
         <h3 className="cart-item-name">{item.name}</h3>
-        <p className="cart-item-price">{item.price}</p>
+        <p className="cart-item-price">
+          {typeof item.price === 'number' ? `CA $ ${item.price.toFixed(2)}` : (item.priceFormatted || item.price)}
+        </p>
         <div className="cart-item-controls">
           <div className="cart-quantity-controls">
             <button
@@ -44,8 +46,10 @@ function CartItem({ item }) {
           </button>
         </div>
         <p className="cart-item-subtotal">
-          sub total {item.price.replace('CA $ ', 'CA $ ')
-            .replace(/[\d.]+/, (match) => (parseFloat(match) * item.quantity).toFixed(2))}
+          sub total CA $ {(typeof item.price === 'number'
+            ? item.price * item.quantity
+            : parseFloat((item.priceFormatted || item.price).replace('CA $ ', '')) * item.quantity
+          ).toFixed(2)}
         </p>
       </div>
     </div>
