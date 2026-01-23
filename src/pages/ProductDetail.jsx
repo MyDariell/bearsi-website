@@ -1,59 +1,22 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import ImageGallery from '../components/ImageGallery'
 import CartModal from '../components/CartModal'
 import { useCart } from '../context/CartContext'
-import { api } from '../services/api'
+import { getProductBySlug } from '../data/products'
 import './ProductDetail.css'
 
 function ProductDetail() {
   const { productId } = useParams()
   const [quantity, setQuantity] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const { addToCart } = useCart()
 
-  useEffect(() => {
-    async function fetchProduct() {
-      try {
-        setLoading(true)
-        const data = await api.getProductBySlug(productId)
-        // Transform API data to match component expectations
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
-        const transformedProduct = {
-          id: data.product.id,
-          slug: data.product.slug,
-          name: data.product.name,
-          stock: data.product.stock_status === 'in_stock' ? 'Currently In Stock' : 'Out of Stock',
-          price: `CA $ ${data.product.price.toFixed(2)}`,
-          description: data.product.description,
-          bears: data.product.bears,
-          images: data.product.images.map(img => `${apiBaseUrl}${img}`)
-        }
-        setProduct(transformedProduct)
-      } catch (err) {
-        console.error('Failed to fetch product:', err)
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchProduct()
-  }, [productId])
+  // Get product from repository
+  const product = getProductBySlug(productId)
 
-  if (loading) {
-    return (
-      <div className="product-detail-page">
-        <Navbar />
-        <div className="loading">Loading product...</div>
-      </div>
-    )
-  }
-
-  if (error || !product) {
+  if (!product) {
     return (
       <div className="product-detail-page">
         <Navbar />
@@ -89,8 +52,8 @@ function ProductDetail() {
           </div>
           <div className="product-info">
             <h1 className="product-name">{product.name}</h1>
-            <p className="product-stock">{product.stock}</p>
-            <p className="product-price">{product.price}</p>
+            <p className="product-stock">{product.stockMessage}</p>
+            <p className="product-price">{product.priceFormatted}</p>
 
             <div className="quantity-section">
               <button
