@@ -1,13 +1,26 @@
-// Import product images
-import vdayBlindBoxImage from '../assets/images/products/vday_collection/vday_blindbox/vday_blindbox.png'
-import vdayBlindBoxCollection from '../assets/images/products/vday_collection/vday_blindbox/bearsi_collection.png'
-import vdayBlindBoxCouplesImage from '../assets/images/products/vday_collection/vday_blindbox_couples/vday_blindbox_couples.png'
-import vdayBlindBoxCouplesCollection from '../assets/images/products/vday_collection/vday_blindbox_couples/bearsi_collection.png'
-
 /**
  * Product data repository
  * Central source of truth for all product information
+ *
+ * Images are automatically loaded from product folders using Vite's glob import
  */
+
+// Dynamically import all product images using Vite's glob import
+const vdayBlindBoxImages = import.meta.glob('../assets/images/products/vday_collection/vday_blindbox/*.png', { eager: true })
+const vdayBlindBoxCouplesImages = import.meta.glob('../assets/images/products/vday_collection/vday_blindbox_couples/*.png', { eager: true })
+
+/**
+ * Helper function to convert glob imports to array of image URLs
+ * @param {Object} globImports - Object from import.meta.glob
+ * @returns {Array} Array of image URLs
+ */
+const getImagesFromGlob = (globImports) => {
+  return Object.values(globImports).map(module => module.default)
+}
+
+// Convert glob imports to image arrays
+const vdayBlindBoxImageArray = getImagesFromGlob(vdayBlindBoxImages)
+const vdayBlindBoxCouplesImageArray = getImagesFromGlob(vdayBlindBoxCouplesImages)
 
 export const PRODUCTS = [
   {
@@ -20,8 +33,8 @@ export const PRODUCTS = [
     stockMessage: 'Currently In Stock',
     description: 'Get any of the following bears:',
     bears: ['Bingsu', 'Pip', 'Powda', 'Sunset'],
-    images: [vdayBlindBoxImage, vdayBlindBoxCollection],
-    thumbnail: vdayBlindBoxImage
+    images: vdayBlindBoxImageArray,
+    thumbnail: vdayBlindBoxImageArray[0]  // First image as thumbnail
   },
   {
     id: 2,
@@ -33,8 +46,8 @@ export const PRODUCTS = [
     stockMessage: 'Currently In Stock',
     description: 'Get any of the following bears:',
     bears: ['Bingsu', 'Pip', 'Powda', 'Sunset'],
-    images: [vdayBlindBoxCouplesImage, vdayBlindBoxCouplesCollection],
-    thumbnail: vdayBlindBoxCouplesImage
+    images: vdayBlindBoxCouplesImageArray,
+    thumbnail: vdayBlindBoxCouplesImageArray[0]  // First image as thumbnail
   }
 ]
 
