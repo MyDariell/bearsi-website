@@ -19,6 +19,10 @@ function Navbar() {
     navigate('/cart')
   }
 
+  const handleAboutUsClick = () => {
+    navigate('/about-us')
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -26,7 +30,7 @@ function Navbar() {
         <div className="nav-buttons">
           <button
             className="nav-btn"
-            onClick={() => handleNavClick('About Us')}
+            onClick={handleAboutUsClick}
           >
             About Us
           </button>
