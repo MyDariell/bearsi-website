@@ -49,12 +49,28 @@
   padding: 0;
 }
 
-.bear-image.about-me {
-  grid-column: 1;
+.meet-the-bears-footer {
+  background-color: #632a36;
+  color: white;
+  padding: 3rem 2rem;
+  text-align: center;
 }
 
-.bear-image.profile {
-  grid-column: 2;
+.footer-verse {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.8;
+  max-width: 900px;
+  margin: 0 auto 1rem;
+  color: white;
+}
+
+.footer-reference {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
 }
 
 @media (max-width: 768px) {
@@ -64,15 +80,29 @@
   }
 
   .bear-row {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 0;
   }
 
-  .bear-image.about-me {
-    grid-column: 1;
+  .bear-about {
+    order: 1;
   }
 
-  .bear-image.profile {
-    grid-column: 1;
+  .bear-profile {
+    order: 2;
+  }
+
+  .meet-the-bears-footer {
+    padding: 2rem 1.5rem;
+  }
+
+  .footer-verse {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .footer-reference {
+    font-size: 0.9rem;
   }
 }

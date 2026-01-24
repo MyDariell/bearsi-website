@@ -31,7 +31,21 @@ export const PRODUCTS = [
     priceFormatted: 'CA $ 20.00',
     stock: 'in_stock',
     stockMessage: 'Currently In Stock',
-    description: 'Get any of the following bears:',
+    description: `Product Description
+In a time where blind boxes have become a global trend, we wanted to reimagine the experience in a more heartfelt way. While surprise collectibles continue to grow, we noticed something missing—a handmade blind box filled with meaning.
+
+Each crochet bear comes as a surprise, allowing every recipient to experience a moment of joy, anticipation, and uniqueness. We believe that no one receives a bear by accident—each one is meant for its person. More than just a gift, it's a small blessing wrapped in surprise, designed to bring comfort, love, and a reminder that someone, somewhere, stitched this just for you.
+
+Product Information
+Collection Name : Bearsi Valentine's Collection
+Designer : DGMD
+Material : 100% Acrylic Yarn
+Keychain : Metal
+Eyes : Plastic
+Safety Note : Not suitable for persons under 3 years.
+
+Special Notes
+Limited Edition. Each bear is handmade; due to the nature of hand-making and variations in lighting or display, products may have slight differences in color or size.`,
     bears: ['Bingsu', 'Pip', 'Powda', 'Sunset'],
     images: vdayBlindBoxImageArray,
     thumbnail: vdayBlindBoxImageArray[0]  // First image as thumbnail
@@ -44,7 +58,21 @@ export const PRODUCTS = [
     priceFormatted: 'CA $ 35.00',
     stock: 'in_stock',
     stockMessage: 'Currently In Stock',
-    description: 'Get any of the following bears:',
+    description: `Product Description
+In a time where blind boxes have become a global trend, we wanted to reimagine the experience in a more heartfelt way. While surprise collectibles continue to grow, we noticed something missing—a handmade blind box filled with meaning.
+
+Each crochet bear comes as a surprise, allowing every recipient to experience a moment of joy, anticipation, and uniqueness. We believe that no one receives a bear by accident—each one is meant for its person. More than just a gift, it's a small blessing wrapped in surprise, designed to bring comfort, love, and a reminder that someone, somewhere, stitched this just for you.
+
+Product Information
+Collection Name : Bearsi Valentine's Collection
+Designer : DGMD
+Material : 100% Acrylic Yarn
+Keychain : Metal
+Eyes : Plastic
+Safety Note : Not suitable for persons under 3 years.
+
+Special Notes
+Limited Edition. Each bear is handmade; due to the nature of hand-making and variations in lighting or display, products may have slight differences in color or size.`,
     bears: ['Bingsu', 'Pip', 'Powda', 'Sunset'],
     images: vdayBlindBoxCouplesImageArray,
     thumbnail: vdayBlindBoxCouplesImageArray[0]  // First image as thumbnail

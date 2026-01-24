@@ -81,12 +81,18 @@ function ProductDetail() {
             </div>
 
             <div className="product-description">
-              <p>{product.description}</p>
-              <ul>
-                {product.bears.map((bear, index) => (
-                  <li key={index}>{bear}</li>
-                ))}
-              </ul>
+              <p className="desc-text" style={{ whiteSpace: 'pre-line' }}>
+                {product.description}
+              </p>
+
+              {/* <div className="bears-list-section">
+                <h3 className="desc-subheading">Available Bears</h3>
+                <ul className="bears-list">
+                  {product.bears.map((bear, index) => (
+                    <li key={index}>{bear}</li>
+                  ))}
+                </ul>
+              </div> */}
             </div>
           </div>
         </div>
