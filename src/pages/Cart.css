@@ -300,6 +300,105 @@
   margin-top: 0.5rem;
 }
 
+.payment-instructions {
+  background: var(--cream-100);
+  border: 2px solid var(--tan-400);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.instructions-title {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--brown-900);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.instruction-step {
+  margin-bottom: 1.2rem;
+}
+
+.step-title {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--brown-800);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.step-text {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--brown-700);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.step-text strong {
+  color: var(--brown-900);
+  font-weight: 600;
+}
+
+.step-list {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--brown-700);
+  line-height: 1.6;
+  margin: 0.5rem 0 0 1.2rem;
+  padding-left: 0.5rem;
+}
+
+.step-list li {
+  margin-bottom: 0.3rem;
+}
+
+.instruction-important {
+  background: var(--tan-200);
+  border-left: 4px solid var(--brown-800);
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+}
+
+.important-title {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--brown-900);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.important-text {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--brown-800);
+  line-height: 1.5;
+  margin: 0 0 0.5rem 0;
+}
+
+.important-list {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--brown-800);
+  line-height: 1.6;
+  margin: 0.5rem 0 0.8rem 1.2rem;
+  padding-left: 0.5rem;
+}
+
+.important-list li {
+  margin-bottom: 0.3rem;
+}
+
+.important-warning {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--brown-900);
+  font-weight: 600;
+  margin: 0;
+}
+
 .order-summary {
   border-top: 2px solid var(--cream-300);
   padding-top: 1.5rem;

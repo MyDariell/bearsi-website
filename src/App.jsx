@@ -5,6 +5,7 @@ import BlindBoxes from './pages/BlindBoxes'
 import ProductDetail from './pages/ProductDetail'
 import Cart from './pages/Cart'
 import AboutUs from './pages/AboutUs'
+import MeetTheBears from './pages/MeetTheBears'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/product/:productId" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/meet-the-bears" element={<MeetTheBears />} />
         </Routes>
       </div>
     </Router>

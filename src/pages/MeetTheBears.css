@@ -1,0 +1,78 @@
+.meet-the-bears {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.meet-the-bears-content {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+}
+
+.title-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+  background-color: #fff;
+}
+
+.title-image {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.bears-collage {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.bear-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  gap: 0;
+  margin: 0;
+}
+
+.bear-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.bear-image.about-me {
+  grid-column: 1;
+}
+
+.bear-image.profile {
+  grid-column: 2;
+}
+
+@media (max-width: 768px) {
+  .title-image {
+    max-width: 400px;
+    padding: 0 1rem;
+  }
+
+  .bear-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .bear-image.about-me {
+    grid-column: 1;
+  }
+
+  .bear-image.profile {
+    grid-column: 1;
+  }
+}

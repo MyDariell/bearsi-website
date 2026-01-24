@@ -23,6 +23,10 @@ function Navbar() {
     navigate('/about-us')
   }
 
+  const handleMeetTheBearsClick = () => {
+    navigate('/meet-the-bears')
+  }
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -36,7 +40,7 @@ function Navbar() {
           </button>
           <button
             className="nav-btn"
-            onClick={() => handleNavClick('Meet the Bears')}
+            onClick={handleMeetTheBearsClick}
           >
             Meet the Bears
           </button>

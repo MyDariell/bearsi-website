@@ -295,9 +295,7 @@ function Cart() {
               />
               {phoneError && <p className="error-message">{phoneError}</p>}
               <p className="cart-hint">
-                *have your email ready to receive your receipt and phone
-                number in case I need to contact you regarding your
-                order.
+                *Confirmation and details of the receipt and order will be sent to your email. 
               </p>
             </div>
 
@@ -406,6 +404,51 @@ function Cart() {
 
             <div className="cart-section">
               <h3 className="cart-section-title">Upload Proof of Transaction</h3>
+
+              <div className="payment-instructions">
+                <h4 className="instructions-title">Payment & Confirmation Steps</h4>
+
+                <div className="instruction-step">
+                  <h5 className="step-title">1. Send Payment</h5>
+                  <p className="step-text">
+                    Once your pickup time and location are confirmed, send payment to{' '}
+                    <strong>Davidwahidin@wealthsimple.me</strong>
+                  </p>
+                </div>
+
+                <div className="instruction-step">
+                  <h5 className="step-title">2. Upload Proof of Payment</h5>
+                  <p className="step-text">Upload a screenshot or receipt showing:</p>
+                  <ul className="step-list">
+                    <li>Payment amount</li>
+                    <li>Date and time</li>
+                    <li>Sender name</li>
+                    <li>Recipient: Davidwahidin@wealthsimple.me</li>
+                  </ul>
+                </div>
+
+                <div className="instruction-step">
+                  <h5 className="step-title">3. Receive Confirmation</h5>
+                  <p className="step-text">
+                    After payment is verified, you will receive a confirmation email.
+                  </p>
+                </div>
+
+                <div className="instruction-important">
+                  <h5 className="important-title">Important</h5>
+                  <p className="important-text">Your order will only be processed after all of the following are completed:</p>
+                  <ul className="important-list">
+                    <li>Pickup time and location confirmed</li>
+                    <li>Payment sent</li>
+                    <li>Proof of payment uploaded</li>
+                    <li>Payment verified</li>
+                  </ul>
+                  <p className="important-warning">
+                    Orders missing any of these steps will not be fulfilled.
+                  </p>
+                </div>
+              </div>
+
               <label className="file-upload-btn">
                 Choose file
                 <input
